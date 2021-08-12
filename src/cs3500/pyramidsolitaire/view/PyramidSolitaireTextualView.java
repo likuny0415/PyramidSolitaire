@@ -1,5 +1,6 @@
 package cs3500.pyramidsolitaire.view;
 
+import cs3500.pyramidsolitaire.model.hw02.Card;
 import cs3500.pyramidsolitaire.model.hw02.PyramidSolitaireModel;
 
 public class PyramidSolitaireTextualView {
@@ -21,6 +22,33 @@ public class PyramidSolitaireTextualView {
                 return "Game over. Score: " + model.getScore();
             }
         }
-        return " j k q r p";
+        String renderModel = renderModel(model);
+        return renderModel;
+    }
+
+    private String renderModel(PyramidSolitaireModel model) {
+        int numRows = model.getNumRows();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < numRows; i++) {
+            if (i != 0) {
+                sb.append("\n");
+            }
+            for (int p = numRows - i - 1; p > 0; p--) {
+                sb.append("  ");
+            }
+            for (int j = 0; j <= i; j++) {
+                if (model.getCardAt(i,j) == null) {
+                    sb.append(". ");
+                } else {
+                    sb.append(model.getCardAt(i,j));
+                }
+                sb.append("  ");
+            }
+
+        }
+        sb.append("\n");
+        sb.append("Draw: ");
+        sb.append(model.getDrawCards());
+        return sb.toString();
     }
 }

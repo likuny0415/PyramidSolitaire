@@ -120,9 +120,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
 
     @Override
     public void remove(int row1, int card1, int row2, int card2) throws IllegalArgumentException, IllegalStateException {
-        if (gameStatus == GameStatus.NOT_STARTED) {
-            throw new IllegalStateException("The game has only started yet, start the game first!");
-        }
+        isValidGame();
         validCardPosition(row1, card1);
         validCardPosition(row2, card2);
         Card c1 = getCardAt(row1, card1);
@@ -131,6 +129,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
         if (sum != 13) {
             throw new IllegalArgumentException("Sum is not 13, can't be removed");
         } else {
+            this.score -= 13;
             changeCardStatus(row1, card1);
             changeCardStatus(row2, card2);
         }
@@ -138,6 +137,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
 
     private void changeCardStatus(int row, int card) {
         pyramidCardsPile[row][card] = null;
+        cardsInPyramidCanRemoved[row][card] = false;
         changeCardStatusAround(row, card);
     }
 
@@ -156,7 +156,6 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
         }
     }
 
-
     private int sumOfTwoCard(Card c1, Card c2) {
         return c1.getValue() + c2.getValue();
     }
@@ -168,6 +167,9 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
         if (card < 0 || card > getRowWidth(row)) {
             throw new IllegalArgumentException("Invalid card position, card out of bound");
         }
+        if (pyramidCardsPile[row][card] == null) {
+            throw new IllegalArgumentException("This position is null, removed or error");
+        }
         if (cardsInPyramidCanRemoved[row][card] == false) {
             throw new IllegalArgumentException("This card is not exposed, can't be removed");
         }
@@ -176,17 +178,58 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
 
     @Override
     public void remove(int row, int card) throws IllegalArgumentException, IllegalStateException {
+        isValidGame();
+        validCardPosition(row, card);
+        Card temp = getCardAt(row,card);
+        int sum = temp.getValue();
+        if (sum != 13) {
+            throw new IllegalArgumentException("This card is not K, can't be removed");
+        } else {
+            changeCardStatus(row, card);
+            this.score -=13;
+        }
+    }
 
+    private void isValidGame() {
+        if (gameStatus == GameStatus.NOT_STARTED) {
+            throw new IllegalStateException("Game has not yet started");
+        }
     }
 
     @Override
     public void removeUsingDraw(int drawIndex, int row, int card) throws IllegalArgumentException, IllegalStateException {
+        isValidGame();
+        validCardPosition(row, card);
+        isValidDrawCard(drawIndex);
 
+        Card drawCard = getDrawCards().get(drawIndex);
+        Card cardInPyramid = getCardAt(row, card);
+        int sum = drawCard.getValue() + cardInPyramid.getValue();
+        if (sum != 13) {
+            throw new IllegalArgumentException("Invalid card remove, choose another draw card or card in pyramid");
+        } else {
+            changeCardStatus(row, card);
+            changeDrawCardInPile(drawIndex);
+            this.score -= cardInPyramid.getValue();
+        }
+    }
+
+    private void changeDrawCardInPile(int drawIndex) {
+        drawCardsPile.remove(drawIndex);
+        drawCardsPile.add(deckOfCards.remove(0));
+    }
+
+    private void isValidDrawCard(int drawIndex) {
+        if (drawIndex < 0 || drawIndex > getNumDraw()) {
+            throw new IllegalArgumentException("Invalid draw card position, choose another one");
+        }
     }
 
     @Override
     public void discardDraw(int drawIndex) throws IllegalArgumentException, IllegalStateException {
-
+        isValidGame();
+        isValidDrawCard(drawIndex);
+        changeDrawCardInPile(drawIndex);
     }
 
     @Override
@@ -196,14 +239,14 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
 
     @Override
     public int getNumDraw() {
-        return this.numberOfDrawCards;
+        List<Card> temp = getDrawCards();
+        return temp.size();
     }
 
     @Override
     public int getRowWidth(int row) throws IllegalArgumentException, IllegalStateException {
-        if (gameStatus == GameStatus.NOT_STARTED) {
-            throw new IllegalStateException("Game has not yet started");
-        } else if (row < 0 || row > numberOfRows) {
+        isValidGame();
+        if (row < 0 || row > numberOfRows) {
             throw new IllegalArgumentException("Invalid row, out of bound");
         }
         return row + 1;
@@ -211,21 +254,34 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card>{
 
     @Override
     public boolean isGameOver() throws IllegalStateException {
+        isValidGame();
+        if (getScore() == 0) {
+            return true;
+        }
+        if (getNumDraw() == 0 || deckOfCards == null) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public int getScore() throws IllegalStateException {
+        isValidGame();
         return this.score;
     }
 
     @Override
     public Card getCardAt(int row, int card) throws IllegalArgumentException, IllegalStateException {
-        return null;
+        isValidGame();
+        if (row < 0 || row > numberOfRows || card < 0 || card > getRowWidth(row)) {
+            throw new IllegalArgumentException("Invalid card position");
+        }
+        return pyramidCardsPile[row][card];
     }
 
     @Override
     public List<Card> getDrawCards() throws IllegalStateException {
-        return null;
+        isValidGame();
+        return drawCardsPile;
     }
 }
