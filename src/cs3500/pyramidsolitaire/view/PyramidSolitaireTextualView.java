@@ -1,21 +1,30 @@
 package cs3500.pyramidsolitaire.view;
 
-import cs3500.pyramidsolitaire.model.hw02.Card;
+
 import cs3500.pyramidsolitaire.model.hw02.PyramidSolitaireModel;
 
 import java.io.IOException;
 
 public class PyramidSolitaireTextualView implements PyramidSolitaireView {
     private final PyramidSolitaireModel<?> model;
+    private Appendable ap;
     // ... any other fields you need
 
     public PyramidSolitaireTextualView(PyramidSolitaireModel<?> model) {
         this.model = model;
     }
 
+    public PyramidSolitaireTextualView(PyramidSolitaireModel<?> model, Appendable ap) {
+        if (model == null) {
+            throw new IllegalArgumentException("Invalid model");
+        }
+        this.model = model;
+        this.ap = ap;
+    }
+
     @Override
     public void render() throws IOException {
-
+        ap.append(toString());
     }
 
     @Override
@@ -55,7 +64,13 @@ public class PyramidSolitaireTextualView implements PyramidSolitaireView {
         }
         sb.append("\n");
         sb.append("Draw: ");
-        sb.append(model.getDrawCards());
+        for (Object c : model.getDrawCards()) {
+            sb.append(c);
+            sb.append(" ");
+        }
+        sb.append("\n");
+        sb.append("Scores: ");
+        sb.append(model.getScore());
         return sb.toString();
     }
 
