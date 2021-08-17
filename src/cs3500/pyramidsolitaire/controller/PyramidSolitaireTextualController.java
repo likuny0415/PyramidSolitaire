@@ -73,7 +73,7 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
         Scanner scanner = new Scanner(this.rd);
         String command = scanner.next();
 
-        try {
+//        try {
             switch (command) {
                 case "q":
                 case "Q":
@@ -104,9 +104,9 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
                 default:
                     throw new IllegalStateException("Unexpected value: " + command);
             }
-        } catch (IllegalArgumentException | IllegalStateException ex) {
-            System.out.println("This step is inappropriate");
-        }
+//        } catch (IllegalArgumentException | IllegalStateException ex) {
+//            System.out.println("Invalid move. Play again. " + ex);
+//        }
     }
 
     private <K> void displayView(PyramidSolitaireModel<K> model) {

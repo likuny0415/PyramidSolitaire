@@ -4,17 +4,15 @@ import cs3500.pyramidsolitaire.controller.PyramidSolitaireController;
 import cs3500.pyramidsolitaire.controller.PyramidSolitaireTextualController;
 import cs3500.pyramidsolitaire.model.hw02.BasicPyramidSolitaire;
 import cs3500.pyramidsolitaire.model.hw02.PyramidSolitaireModel;
-import cs3500.pyramidsolitaire.view.PyramidSolitaireTextualView;
-import cs3500.pyramidsolitaire.view.PyramidSolitaireView;
+import cs3500.pyramidsolitaire.model.hw04.PyramidSolitaireCreator;
+
 
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class PyramidSolitaire {
     public static void main(String[] args) {
-        PyramidSolitaireModel model = new BasicPyramidSolitaire();
-
-        PyramidSolitaireView view = new PyramidSolitaireTextualView(model);
+        PyramidSolitaireModel model = PyramidSolitaireCreator.create(PyramidSolitaireCreator.GameType.RELAXED);
         PyramidSolitaireController controller = new PyramidSolitaireTextualController(new InputStreamReader(System.in),
                 System.out);
         controller.playGame(model,model.getDeck(),false,7,3);
