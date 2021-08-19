@@ -96,7 +96,7 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
         }
     }
 
-    public void putCardsIntoPyramid() {
+    protected void putCardsIntoPyramid() {
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j <= i; j++) {
                 pyramidCardsPile[i][j] = deckOfCards.remove(0);

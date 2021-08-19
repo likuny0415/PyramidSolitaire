@@ -2,6 +2,7 @@ package cs3500.pyramidsolitaire.model.hw04;
 
 import cs3500.pyramidsolitaire.model.hw02.BasicPyramidSolitaire;
 import cs3500.pyramidsolitaire.model.hw02.Card;
+import cs3500.pyramidsolitaire.model.hw02.GameStatus;
 
 import java.util.*;
 
@@ -32,14 +33,41 @@ public class MultiPyramidSolitaire extends BasicPyramidSolitaire {
         } else if (shuffle) {
             Collections.shuffle(deck);
         }
+        this.numberOfRows = numRows;
+        this.numberOfDrawCards = numDraw;
+        this.deckOfCards = deck;
+        this.gameStatus = GameStatus.RUNNING;
+        this.pyramidCardsPile = new Card[numRows][numRows + 6]; // need to be changed
+        this.cardsInPyramidCanRemoved = new Boolean[numRows][numRows + 6]; // need to be changed
+
+        // initiate cardsInPyramidCanRemoved
+        for (int i = 0; i < numberOfRows; i++) {
+            for (int j = 0; j <= i + 7; j++) {
+                cardsInPyramidCanRemoved[i][j] = false;
+            }
+        }
+        this.score = 0;
+        // put cards in the pyramid
+        putCardsIntoPyramid();
+        // put cards into the draw cards pile
+        putCardsIntoDrawCardsPile();
+        // expose the cards that can be removed
+        exposeCards();
+        // Get score;
+        calculateScoreInPyramid();
     }
 
     @Override
-    public boolean noDuplicateCards(List<Card> deck) {
+    protected void putCardsIntoPyramid() {
+        
+    }
+
+    @Override
+    protected boolean noDuplicateCards(List<Card> deck) {
         Map<Card, Integer> map = new HashMap<>();
         for (Card card : deck) {
             if (map.containsKey(card)) {
-                map.getOrDefault(card, 1 + map.get(card));
+                map.put(card, map.get(card) + 1);
             } else {
                 map.put(card, 1);
             }
@@ -50,5 +78,16 @@ public class MultiPyramidSolitaire extends BasicPyramidSolitaire {
             }
         }
         return false;
+    }
+
+    @Override
+    public int getRowWidth(int row) {
+        if (gameStatus != GameStatus.RUNNING) {
+            throw new IllegalStateException("Game has not started");
+        }
+        if (row < 0 || row > numberOfRows) {
+            throw new IllegalArgumentException("Invalid row number");
+        }
+        return row + 7;
     }
 }
