@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class PyramidSolitaire {
     public static void main(String[] args) {
-        PyramidSolitaireModel model = PyramidSolitaireCreator.create(PyramidSolitaireCreator.GameType.RELAXED);
+        PyramidSolitaireModel model = PyramidSolitaireCreator.create(PyramidSolitaireCreator.GameType.MULTIPYRAMID);
         PyramidSolitaireController controller = new PyramidSolitaireTextualController(new InputStreamReader(System.in),
                 System.out);
         controller.playGame(model,model.getDeck(),false,7,3);

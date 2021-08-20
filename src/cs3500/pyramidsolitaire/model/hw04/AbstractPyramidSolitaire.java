@@ -66,26 +66,11 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
         putCardsIntoDrawCardsPile();
         // expose the cards that can be removed
         exposeCards();
-        // Get score;
-        calculateScoreInPyramid();
-    }
-
-
-    protected void calculateScoreInPyramid() {
-        for (int i = 0; i < numberOfRows; i++) {
-            for (int j = 0; j <= i; j++) {
-                score += pyramidCardsPile[i][j].getValue();
-            }
-        }
     }
 
     protected void exposeCards() {
-        for (int i =0; i < this.numberOfRows; i++) {
-            for (int j = 0; j < this.numberOfRows; j++) {
-                if (i == numberOfRows - 1) {
-                    cardsInPyramidCanRemoved[i][j] = true;
-                }
-            }
+        for (int i = 0; i < this.numberOfRows; i++) {
+            cardsInPyramidCanRemoved[numberOfRows - 1][i] = true;
         }
     }
 
@@ -99,9 +84,12 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
     protected void putCardsIntoPyramid() {
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j <= i; j++) {
-                pyramidCardsPile[i][j] = deckOfCards.remove(0);
+                Card removedCard = deckOfCards.remove(0);
+                pyramidCardsPile[i][j] = removedCard;
+                this.score += removedCard.getValue();
             }
         }
+
     }
 
     /**

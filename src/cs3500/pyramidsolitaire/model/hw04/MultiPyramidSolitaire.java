@@ -42,7 +42,7 @@ public class MultiPyramidSolitaire extends BasicPyramidSolitaire {
 
         // initiate cardsInPyramidCanRemoved
         for (int i = 0; i < numberOfRows; i++) {
-            for (int j = 0; j <= i + 7; j++) {
+            for (int j = 0; j < i + 7; j++) {
                 cardsInPyramidCanRemoved[i][j] = false;
             }
         }
@@ -53,13 +53,17 @@ public class MultiPyramidSolitaire extends BasicPyramidSolitaire {
         putCardsIntoDrawCardsPile();
         // expose the cards that can be removed
         exposeCards();
-        // Get score;
-        calculateScoreInPyramid();
     }
 
     @Override
     protected void putCardsIntoPyramid() {
-        
+        for (int i = 0; i < numberOfRows; i++) {
+            for (int j = 0; j < i + 7; j++) {
+                Card removedCard = deckOfCards.remove(0);
+                pyramidCardsPile[i][j] = removedCard;
+                this.score += removedCard.getValue();
+            }
+        }
     }
 
     @Override
